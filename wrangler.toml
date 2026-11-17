@@ -1,0 +1,33 @@
+name = "instantly-apollo-sync"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Every 15 minutes. Our Instantly plan has no webhooks, so we poll:
+# new sent emails + replies from Instantly, bounce/unsubscribe status, and
+# Apollo call outcomes. A 15-minute lag is fine: the first call is a day later.
+[triggers]
+crons = ["*/15 * * * *"]
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "instantly-apollo-sync"
+database_id = "00000000-0000-0000-0000-000000000016"
+
+[vars]
+# Apollo user who owns the call tasks (Yoshi Choi).
+APOLLO_USER_ID = "000000000000000000000017"
+# Apollo mailbox passed on enrollment. The call sequences have no email steps,
+# so nothing is ever sent from it; Apollo just requires one. Yoshi's default.
+APOLLO_SEND_ACCOUNT_ID = "000000000000000000000018"
+# Bounce alerts go to a Slack DM (user ID), from an existing Slack bot.
+SLACK_NOTIFY_CHANNEL = "U0000000019"
+
+# Secrets (wrangler secret put <NAME>), NOT stored here:
+#   INSTANTLY_API_KEY  Instantly API v2 key
+#   APOLLO_API_KEY     Apollo master key
+#   ADMIN_TOKEN        required as ?token= on /status and /run
+#   SLACK_BOT_TOKEN    Slack bot token (chat:write), for bounce alerts
